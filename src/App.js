@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import commaAdd from './utils/commaAdd';
 
 import './App.css';
 import Button from './components/Button/Button';
@@ -11,32 +12,58 @@ function App() {
 
   const handleButtonPress = (content) => () => {
     const num = parseFloat(value);
+
+    let handleExtraEvaluations = () => {
+      if (operator !== null) {
+        if (operator === '+') {
+          setPrevNum(prevNum + parseFloat(value));
+        } else if (operator === '-') {
+          setPrevNum(prevNum - parseFloat(value));
+        } else if (operator === '*') {
+          setPrevNum(prevNum * parseFloat(value));
+        } else if (operator === '/') {
+          setPrevNum(prevNum / parseFloat(value));
+        }
+      } else {
+        setPrevNum(parseFloat(value));
+      }
+    };
+
     if (content === 'Clear') {
       setValue('0');
       setPrevNum(null);
       setOperator(null);
       return;
     }
+
+    if (content === '.') {
+      if (value.includes('.')) return;
+      setValue(num + '.');
+      return;
+    }
+
     if (content === '+') {
-      setPrevNum(parseFloat(value));
+      handleExtraEvaluations();
       setValue('0');
       setOperator('+');
       return;
     }
+
     if (content === '-') {
-      setPrevNum(parseFloat(value));
+      handleExtraEvaluations();
       setValue('0');
       setOperator('-');
       return;
     }
+
     if (content === '*') {
-      setPrevNum(parseFloat(value));
+      handleExtraEvaluations();
       setValue('0');
       setOperator('*');
       return;
     }
     if (content === '/') {
-      setPrevNum(parseFloat(value));
+      handleExtraEvaluations();
       setValue('0');
       setOperator('/');
       return;
@@ -57,14 +84,19 @@ function App() {
       setOperator(null);
       return;
     }
-    setValue(parseFloat(num + content).toString());
+
+    if (value[value.length - 1] === '.') {
+      setValue(value + content);
+    } else {
+      setValue(parseFloat(num + content).toString());
+    }
   };
 
   return (
     <div className='App'>
       <div className='calc-wrap'>
         <div className='row'>
-          <Input>{value}</Input>
+          <Input>{commaAdd(value)}</Input>
         </div>
         <div className='row'>
           <Button handleClick={handleButtonPress} content='7' />
